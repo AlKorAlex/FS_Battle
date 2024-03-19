@@ -1,14 +1,19 @@
 
+import pygame
 class Unit():
-    def __init__(self, name, type, com_lvl, dice, health, moral):
+    def __init__(self, name, type, com_lvl, dice, health, moral, image):
         self.name = name
         self.type = type
         self.com_lvl = com_lvl
         self.health = health
         self.dice = dice
         self.moral = moral
+        self.image = image
 
         self.demoralized = False
+
+        self.surf_normal = pygame.image.load(self.image)  # создание поверхности из картинки юнита
+        self.surf = pygame.transform.scale(self.surf_normal, (90, 90))
 
     def demoralization(self):
         """Деморализует отряд"""
@@ -31,3 +36,6 @@ class Unit():
             condition = 'В порядке'
         print('Номер - ', number, 'Имя - ', self.name, ', Hp - ', self.health, ', Moral - ', self.moral, 'Состояние - ', condition)
 
+    def draw_unit(self, screen, x, y,):
+        self.rect = self.surf.get_rect(topleft=(x, y))
+        screen.blit(self.surf, self.rect)

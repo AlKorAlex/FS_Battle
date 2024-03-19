@@ -1,4 +1,9 @@
-def onix():
-    return 1, 2
+from window import Main_Window
+import pygame
 
-onix()
+
+while True:
+    main = Main_Window()
+    main.main_f()
+    pygame.display.update()
+    main.clock.tick(main.FPS)

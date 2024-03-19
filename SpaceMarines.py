@@ -4,20 +4,20 @@ from battle_card import Battle_card
 
 class Space_Marines_Army:
     def __init__(self):
-        self.all_units = [['Разведчики', 'Troop', 0, 1, 2, 2],
-                     ['Ударный крейсер', 'Ship', 0, 2, 2, 2],
-                     ['Космодесант', 'Troop', 1, 2, 3, 3],
-                     ['Ленд Рейдер', 'Troop', 2, 3, 4, 4],
-                     ['Боевая Баржа', 'Ship', 2, 4, 5, 4],
-                     ['Титан', 'Troop', 3, 3, 5, 4]]
+        self.all_units = [['Разведчики', 'Troop', 0, 1, 2, 2, "images/Battle/Ultramarins_Units/0_Разведчики.png"],
+                     ['Ударный крейсер', 'Ship', 0, 2, 2, 2, "images/Battle/Ultramarins_Units/0_Ударный крейсер.png"],
+                     ['Космодесант', 'Troop', 1, 2, 3, 3, "images/Battle/Ultramarins_Units/1_Космодесант.png"],
+                     ['Ленд Рейдер', 'Troop', 2, 3, 4, 4, "images/Battle/Ultramarins_Units/2_Боевая_Баржа.png"],
+                     ['Боевая Баржа', 'Ship', 2, 4, 5, 4, "images/Battle/Ultramarins_Units/2_Ленд_Рейдер.png"],
+                     ['Титан', 'Troop', 3, 3, 5, 4, "images/Battle/Ultramarins_Units/3_Титан.png"]]
 
 
     def create_unit(self, number):
         number -= 1
         n = []
-        for i in range(0, 6):
-            n.append(self.all_units[number][n[i]])
-        return Unit(n[0], n[1], n[2], n[3], n[4], n[5])
+        for i in range(0, 7):
+            n.append(self.all_units[number][i])
+        return Unit(n[0], n[1], n[2], n[3], n[4], n[5], n[6])
 
 class Space_Marines_Cards:
     def __init__(self):

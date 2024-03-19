@@ -2,7 +2,7 @@ import random
 from battle_card import Battle_card
 from battle_card import all_cards_cosmo
 from dice import Dice
-from SpaceMarines import Space_Marines_Cards
+from SpaceMarines import Space_Marines_Cards, Space_Marines_Army
 class Player():
     def __init__(self, name, number_dice, race=None):
 
@@ -20,6 +20,7 @@ class Player():
         self.army = []
         self.race = Space_Marines_Cards()
 
+        self._form_random_unit_list()
         self.first_rolling_dice()
         self._recalculation()
 
@@ -39,18 +40,18 @@ class Player():
         pass
 
     def choose_battle_card(self):
-        # Выбрать боевую карту
+        # Выбрать боевую карту (Переделать)
         for i in range(0, len(self.battle_cards)):
             print(i + 1, ' ', self.battle_cards[i].name)
         bk = int(input('Выберите карту(номер): ')) - 1
         return bk
 
     def play_battle_card(self, number_battle_card):
-        # Разыграть боевую карту
-        card = self.battle_cards[number_battle_card]
-        self.using_battle_card.append(card)
-        card.first_property_condition(self)
-        card.second_property_condition(self)
+        # Розыгрыш боевой карты
+        card = self.battle_cards[number_battle_card] # Сама боевая карта
+        self.using_battle_card.append(card) # Добавление боевой карты в использованные карты
+        card.first_property_condition(self) # Первое свойство карты
+        card.second_property_condition(self) # Второе свойство карты
         del self.battle_cards[number_battle_card]
         self._recalculation()
 
@@ -62,9 +63,6 @@ class Player():
         print('Выберите юнит, который хотите добавить:')
         for i in range(0, 6):
             pass
-
-
-
 
     def formation_battle_deck(self):
         # Сформировать боевую колоду (5 карт)
@@ -82,7 +80,7 @@ class Player():
             self._print_unit_list()
             unit = int(input('Введит номер юнита\n'))
             if self.army[unit-1].damage_check(damage) == True:
-                damage -= self.army[unit-1]
+                damage -= self.army[unit-1].health
                 del self.army[unit-1]
                 return False
             else:
@@ -168,3 +166,7 @@ class Player():
 
     def _form_custom_deck(self):
         pass
+
+    def _form_random_unit_list(self):
+        for i in range(0, 4):
+            self.add_unit(Space_Marines_Army().create_unit(random.randint(1, 6)))

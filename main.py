@@ -3,6 +3,9 @@ from player import Player
 import pygame
 from settings import Settings
 from interface import Interface
+from check_events import Check_Events
+
+
 class FS:
     """Класс для управления ресурсами и поведением игры"""
 
@@ -29,35 +32,21 @@ class FS:
 
     def run_game(self):
         """Запуск основного цикла игры"""
-        # player = self.game_stats.player_attacker
-        # self.game_stats.player_attacker._card_add(Battle_card('Благословлённая броня', 2, 0, 0, 1, 0, 'hui', 'agf', 'asf', ['Космодесантник'], Property_Base_Blessed_Armor))
-        # self.game_stats.player_attacker._add_army(Unit('Космодесантник', 'Unit', 1, 3, 3, 3))
-        # bk = self.game_stats.player_attacker.choose_battle_card()
-        # self.game_stats.player_attacker.play_battle_card(bk)
-
-        self.game_stats.full_combat() # Запуск полного цикла боя
-
-
-
-
+        turn = True
         while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-
-                    for j in range(0, 2): # Нажатие на карты в руке у обоих игроков
-                        for i in range(0, len(self.game_stats.players[j].battle_cards)):
-                            button_clicked = self.game_stats.players[j].battle_cards[i].rect.collidepoint(
-                                mouse_pos)
-                            if button_clicked:
-                                print(self.game_stats.players[j].battle_cards[i].name)
-
-
+            self.game_stats.full_combat()  # Запуск полного цикла боя
+            Check_Events(self).check_events(None)
             self.interface.page('combat_interface') # отрисовка страницы битвы
-            self.clock.tick(self.FPS)
+            #Question_Window(self.screen).draw_question_window()
             pygame.display.update()
+
+            # while turn == True:
+            #     self.game_stats._choose_combat_cards()
+            #     turn = False
+            self.clock.tick(self.FPS)
+
+
+
 
 
 

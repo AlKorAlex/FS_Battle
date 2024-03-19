@@ -10,16 +10,18 @@ class Battle_card():
         self.defence = defence
         self.moral = moral
         self.image = image
+        self.image_back = None
         self.text_first = text_first
         self.text_second = text_second
         self.condition = condition
 
         self.property = property # Способности карт
 
-        self.surf_normal = pygame.image.load(self.image) # Нужно для отрисовки
+        self.surf_normal = pygame.image.load(self.image) # создание поверхности из картинки карты
         self.surf = pygame.transform.scale(self.surf_normal, (self.surf_normal.get_width() // 4.16, self.surf_normal.get_height() // 4.16))
 
     def first_property_condition(self, player):
+        #Первое свойство карты
         print(self.text_first)
         text = int(input('Вы хотите использовать первое свойство карты? 1 - да, 2 - нет\n'))
         if text == 1:
