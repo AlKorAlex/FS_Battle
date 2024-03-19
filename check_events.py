@@ -18,3 +18,16 @@ class Check_Events():
                                 bk = self.game_stats.players[j].battle_cards[i]
                                 print(bk.name)
                                 return bk
+                elif move == "question":
+                    for i in range(0, 2): # Кнопки да и нет (Переделать)
+                        button_clicked = self.game_stats.quest.buttons_rect[i].collidepoint(mouse_pos)
+                        if button_clicked and i == 0:
+                            return True
+                        elif button_clicked and i == 1:
+                            return False
+                elif move == "unit":
+                    for i in range(0, len(self.game_stats.units_window.units)):
+                        button_clicked = self.game_stats.units_window.units_rect[i].collidepoint(mouse_pos)
+                        if button_clicked:
+                            print("yes")
+

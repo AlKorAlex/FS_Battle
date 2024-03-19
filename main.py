@@ -34,17 +34,14 @@ class FS:
         """Запуск основного цикла игры"""
         turn = True
         while True:
-            self.game_stats.full_combat()  # Запуск полного цикла боя
+            self.game_stats.full_combat(self)  # Запуск полного цикла боя
             Check_Events(self).check_events(None)
-            self.interface.page('combat_interface') # отрисовка страницы битвы
-            #Question_Window(self.screen).draw_question_window()
-            pygame.display.update()
+            self._update_screen()
 
-            # while turn == True:
-            #     self.game_stats._choose_combat_cards()
-            #     turn = False
-            self.clock.tick(self.FPS)
-
+    def _update_screen(self):
+        self.interface.page('combat_interface')  # отрисовка страницы битвы
+        pygame.display.update()
+        self.clock.tick(self.FPS)
 
 
 

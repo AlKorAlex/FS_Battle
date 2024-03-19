@@ -22,10 +22,7 @@ class Battle_card():
 
     def first_property_condition(self, player):
         #Первое свойство карты
-        print(self.text_first)
-        text = int(input('Вы хотите использовать первое свойство карты? 1 - да, 2 - нет\n'))
-        if text == 1:
-            self.property.use_first_property(self, player)
+        self.property.use_first_property(self, player)
 
 
     def second_property_condition(self, player):

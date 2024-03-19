@@ -72,21 +72,18 @@ class Player():
             self.battle_cards.append(all_card[card_number])
             del all_card[card_number]
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, unit_number):
         # Получение урона армией игрока
-        while (damage != 0):
-            print('Входящий урон: ', damage)
-            print('Выберите юнита для получения урона')
-            self._print_unit_list()
-            unit = int(input('Введит номер юнита\n'))
-            if self.army[unit-1].damage_check(damage) == True:
-                damage -= self.army[unit-1].health
-                del self.army[unit-1]
-                return False
-            else:
-                damage = 0
-                self.army[unit-1].demoralization()
-                return True
+        if self.army[unit_number].damage_check(damage) == True:
+            damage -= self.army[unit_number].health
+            del self.army[unit_number] # Удалить убитого юнита
+            return False
+        else:
+            damage = 0
+            self.army[unit_number].demoralization()
+            return True
+
+
 
     def _add_dice(self, type_dice = None):
         # Добавить кубик игроку

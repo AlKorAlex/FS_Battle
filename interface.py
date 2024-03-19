@@ -2,7 +2,6 @@ import pygame
 from button import Button_any
 from battle_card import Battle_card
 from property import *
-from game_stats import Game_stats
 from settings import Settings
 
 class Interface():
@@ -100,7 +99,7 @@ class Interface():
                     self.screen.blit(self.surf, self.rect)
 
 
-        for j in range(0, 2):
+        for j in range(0, 2): # Отрисовывает юнитов игроков
             k = 0
             for i in range(0, len(self.game_stats.players[j].army)):
                 unit = self.game_stats.players[j].army[i] # Конкретный юнит
@@ -147,16 +146,80 @@ class Main_Menu():
         Button_any(self.screen, 'Выход', 200, 100, 0, 300, (0, 255, 0)).draw_button()
 
 class Question_Window():
-    def __init__(self, fs_game):
-        self.screen = fs_game.screen
+    def __init__(self, screen):
+        self.screen = screen
+
         self.text = None
         self.surf = pygame.Surface((500, 500))
         self.surf.fill(Settings().RED)
+        self.rect = self.surf.get_rect(center=(Settings().screen_width//2, Settings().screen_height//2))
+
         f = pygame.font.SysFont(None, 48)
-        self.sc_text = f.render('Привет Мир!', 1, Settings().RED, Settings().BLACK)
+        self.sc_text = f.render('Вы хотите использовать первое свойство?', 1, Settings().RED, Settings().BLACK)
         self.pos = self.sc_text.get_rect(center=(500//2, 500//2))
-    def draw_question_window(self):
-        self.surf.blit(self.sc_text, self.pos)
-        Button_any(self.surf, 'Да', 200, 100, 50, 300, (0, 255, 0)).draw_button()
-        Button_any(self.surf, 'Нет', 200, 100, 300, 300, (0, 255, 0)).draw_button()
-        self.screen.blit(self.surf, (500, 500))
+
+
+        self.button_yes = Button_any(self.surf, 'Да', 200, 100, 50, 300, (0, 255, 0))
+        self.button_no = Button_any(self.surf, 'Нет', 200, 100, 300, 300, (0, 255, 0))
+
+        self.buttons_rect = []
+        self.rect_yes = pygame.Rect(self.rect.x+self.button_yes.rect.x, self.rect.y+self.button_yes.rect.y, self.button_yes.rect.width, self.button_yes.rect.height)
+        self.rect_no = pygame.Rect(self.rect.x+self.button_no.rect.x, self.rect.y+self.button_no.rect.y, self.button_no.rect.width, self.button_no.rect.height)
+        self.buttons_rect.append(self.rect_yes)
+        self.buttons_rect.append(self.rect_no)
+    def draw_window(self):
+        self.surf.blit(self.sc_text, self.pos) # Текст
+        self.button_yes.draw_button() # Кнопка Да
+        self.button_no.draw_button() # Кнопка Нет
+        self.screen.blit(self.surf, self.rect) # Отрисовать окно
+
+class Unit_Window():
+    def __init__(self, screen, player):
+        self.screen = screen
+        self.units = player.army
+
+
+
+        self.text = None
+        self.surf = pygame.Surface((500, 500))
+        self.surf.fill(Settings().RED)
+        self.rect = self.surf.get_rect(center=(Settings().screen_width // 2, Settings().screen_height // 2))
+
+        f = pygame.font.SysFont(None, 48)
+        self.sc_text = f.render('Выберите юнита', 1, Settings().RED, Settings().BLACK)
+        self.pos = self.sc_text.get_rect(center=(500 // 2, 500 // 2))
+
+        self.button_yes = Button_any(self.surf, 'Подтвердить', 200, 100, 50, 300, (0, 255, 0))
+        self.button_no = Button_any(self.surf, 'Сброс', 200, 100, 300, 300, (0, 255, 0))
+
+        self.buttons_rect = []
+
+        for i in range(0, len(self.units)):
+            pass
+
+        self.rect_yes = pygame.Rect(self.rect.x + self.button_yes.rect.x, self.rect.y + self.button_yes.rect.y,
+                                    self.button_yes.rect.width, self.button_yes.rect.height)
+        self.rect_no = pygame.Rect(self.rect.x + self.button_no.rect.x, self.rect.y + self.button_no.rect.y,
+                                   self.button_no.rect.width, self.button_no.rect.height)
+        self.buttons_rect.append(self.rect_yes)
+        self.buttons_rect.append(self.rect_no)
+
+        # Отрисовка юнитов
+
+
+    def draw_window(self):
+        self.units_rect = []
+        for i in range(0, len(self.units)):
+            unit = self.units[i]
+            played_unit_position_x = 90 * i + 20 * i
+            played_unit_position_y = 60
+            unit.draw_unit(self.surf, played_unit_position_x, played_unit_position_y)
+
+            unit_rect = pygame.Rect(self.rect.x + played_unit_position_x, self.rect.y + played_unit_position_y, 90, 90)
+            self.units_rect.append(unit_rect)
+
+
+        self.surf.blit(self.sc_text, self.pos)  # Текст
+        self.button_yes.draw_button()  # Кнопка Подтвердить
+        self.button_no.draw_button()  # Кнопка Сброс
+        self.screen.blit(self.surf, self.rect)  # Отрисовать окно

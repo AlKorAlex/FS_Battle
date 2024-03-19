@@ -25,9 +25,10 @@ class Unit():
 
     def damage_check(self, damage):
         if damage >= self.health:
-            return True
+            return True # юнит убит
         else:
-            return False
+            self.demoralization()
+            return False # Юнит жив
 
     def info_from_battle(self, number):
         if self.demoralized == True:

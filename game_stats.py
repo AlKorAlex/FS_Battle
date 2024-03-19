@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from property import *
 from SpaceMarines import *
 from check_events import Check_Events
+from interface import Question_Window
+from interface import Unit_Window
+import pygame
 class Game_stats():
     """Отслеживает статистику для игры FS"""
 
@@ -14,12 +17,13 @@ class Game_stats():
         self.active_stage = 0
 
 
-    def full_combat(self):
+    def full_combat(self, screen):
         if self.active_stage == 0:
             self.stage_prepare()
             self.active_stage = 1
         elif self.active_stage == 1:
-            self.stage_combat()
+            self.stage_combat(screen)
+            self.active_stage = 3
         elif self.active_stage == 2:
             self.stage_final()
     def stage_prepare(self):
@@ -34,19 +38,33 @@ class Game_stats():
         # Вызов подкреплений (Не реализовано)
 
 
-    def stage_combat(self):
-            self.round_combat()
+    def stage_combat(self, fs_game):
+        self.round_combat(fs_game)
 
-    def round_combat(self):
+    def round_combat(self, fs_game):
         # Выбор боевых карт
         self._choose_combat_cards()
 
         # Розыгрыш боевой карты
         for i in range(0, 2):
+            turn = True
+            self.quest = Question_Window(fs_game.screen)
+            while turn == True:
+                self.quest.draw_window()
+                pygame.display.update()
+                match Check_Events(self).check_events("question"):
+                    case True:
+                        print("yes")
+                        turn = False
+                    case False:
+                        print("No")
+                        turn = False
             self.players[i].play_battle_card(self.players_cards[i])
+            fs_game._update_screen()
         self.players_cards = []
 
-        self._taking_damage(self.player_attacker, self.player_defender)
+        """Реализовать окно с получением урона"""
+        self._taking_damage(fs_game.screen)
 
         # Обнуляем временные атаки и защиты
         self.player_attacker.temporary_attack = 0
@@ -62,28 +80,35 @@ class Game_stats():
         elif len(self.player_defender.army) == 0:
             print("Победил атакующий")
             return 0
-        self.active_stage = 2
-
-    def _taking_damage(self, player1, player2):
-        # Шаг получения повреждений
-        damage = player1.all_attack - player2.all_defence
-        if damage < 0:
-            damage = 0
-        moral1 = player1.take_damage(damage)
-        damage = player2.all_attack - player1.all_defence
-        if damage < 0:
-            damage = 0
-        moral2 = player2.take_damage(damage)
-
 
     def stage_final(self):
         if self.player_attacker.all_moral > self.player_defender.all_moral:
-            print("Победил защищающийся")
+            print("По морали победил защищающийся")
         else:
-            print("Победил атакующий")
+            print("По морали победил атакующий")
         self.active_stage = 3
+
+    def _taking_damage(self, screen):
         for i in range(0, 2):
-            print(self.players[i].battle_cards)
+            damage = self.players[i].all_attack - self.players[i-1**i].all_defence
+            if damage <= 0:
+                damage = 0
+            else:
+                # Выбор юнита
+                while damage > 0:
+                    turn = True
+                    self.units_window = Unit_Window(screen, self.players[i])
+                    while turn == True:
+                        self.units_window.draw_window()
+                        pygame.display.update()
+                        check = Check_Events(self).check_events("unit")
+                        if check != None:
+                            unit_number = check
+                            if self.players[i].army[unit_number].damage_check(damage) == True:
+                                del self.players[i].army[unit_number]
+                            else:
+                                damage -= self.players[i].army[unit_number].health
+
 
     def _choose_combat_cards(self):
         for i in range(0, 2):

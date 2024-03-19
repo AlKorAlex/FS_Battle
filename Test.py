@@ -1,9 +1,6 @@
 from window import Main_Window
 import pygame
 
-
+main = Main_Window()
 while True:
-    main = Main_Window()
     main.main_f()
-    pygame.display.update()
-    main.clock.tick(main.FPS)

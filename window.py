@@ -17,5 +17,7 @@ class Main_Window:
         self.clock = pygame.time.Clock()
         self.screen.fill(self.settings.bg_color)
     def main_f(self):
-        return self
+        pygame.display.update()
+        self.clock.tick(self.FPS)
+        return self.screen
 
