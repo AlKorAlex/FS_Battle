@@ -10,8 +10,8 @@ class FS:
         """Инициализирует игру и создаёт игровые ресурсы"""
 
         # Создание экземпляра для хранения игровой статистики
-        self.player_one = Player('Космодесантник', 4)
-        self.player_two = Player('Орк', 4)
+        self.player_one = Player('Космодесантник', 8)
+        self.player_two = Player('Орк', 8)
         self.game_stats = Game_stats(self.player_one, self.player_two)
 
         # Визуальная часть игры
@@ -35,8 +35,9 @@ class FS:
         # bk = self.game_stats.player_attacker.choose_battle_card()
         # self.game_stats.player_attacker.play_battle_card(bk)
 
+        self.game_stats.full_combat() # Запуск полного цикла боя
 
-        self.game_stats.full_combat()
+
 
 
         while True:
@@ -54,7 +55,7 @@ class FS:
                                 print(self.game_stats.players[j].battle_cards[i].name)
 
 
-            self.interface.page('combat_interface')
+            self.interface.page('combat_interface') # отрисовка страницы битвы
             self.clock.tick(self.FPS)
             pygame.display.update()
 

@@ -74,29 +74,31 @@ class Interface():
 
 
 
+        for j in range(0, 2): # Отрисовывает кубики игроков
+            for i in range(0, len(self.game_stats.players[j].all_dice)):  # Отрисовывает кубики нападающего
+                match self.game_stats.players[j].all_dice[i].type:
+                    case 'attack':
+                        self.image = 'images/Battle/Attack_Cube.jpg'
+                    case 'defence':
+                        self.image = 'images/Battle/Defence_Cube.jpg'
+                    case 'moral':
+                        self.image = 'images/Battle/Moral_Cube.jpg'
+                self.surf = pygame.image.load(self.image)
+                self.surf = pygame.transform.scale(self.surf, (60, 60)) # Меняет размер картинки до 60x60
 
-        for i in range(0, len(self.game_stats.player_attacker.all_dice)):  # Отрисовывает кубики нападающего
-            match self.game_stats.player_attacker.all_dice[i].type:
-                case 'attack':
-                    self.image = 'images/Battle/Attack_Cube.jpg'
-                case 'defence':
-                    self.image = 'images/Battle/Defence_Cube.jpg'
-                case 'moral':
-                    self.image = 'images/Battle/Moral_Cube.jpg'
-            self.surf = pygame.image.load(self.image)
-            self.surf = pygame.transform.scale(self.surf, (60, 60))
-            x = self.settings.screen_width * 1.1 // 3.2
-            w_s = (self.settings.screen_width // 6.4 - 4 * self.surf.get_width()) // 5
-            if i > 3:
-                played_cards_position_x = x + w_s * (i - 3) + self.surf.get_width() * (i - 4)
-                played_cards_position_y = 2 * w_s + self.surf.get_height()
-                self.rect = self.surf.get_rect(topleft=(played_cards_position_x, played_cards_position_y))
-                self.screen.blit(self.surf, self.rect)
-            else:
-                played_cards_position_x = x + w_s * (i + 1) + self.surf.get_width() * i
-                played_cards_position_y = w_s
-                self.rect = self.surf.get_rect(topleft=(played_cards_position_x, played_cards_position_y))
-                self.screen.blit(self.surf, self.rect)
+                x = self.settings.screen_width * 1.1 // 3.2 * abs(j-1) + j * self.screen.get_rect().midtop[0]
+                w_s = (self.settings.screen_width // 6.4 - 4 * self.surf.get_width()) // 5
+                if i > 3:
+                    played_cards_position_x = x + w_s * (i - 3) + self.surf.get_width() * (i - 4)
+                    played_cards_position_y = 2 * w_s + self.surf.get_height()
+                    self.rect = self.surf.get_rect(topleft=(played_cards_position_x, played_cards_position_y))
+                    self.screen.blit(self.surf, self.rect)
+                else:
+                    played_cards_position_x = x + w_s * (i + 1) + self.surf.get_width() * i
+                    played_cards_position_y = w_s
+                    self.rect = self.surf.get_rect(topleft=(played_cards_position_x, played_cards_position_y))
+                    self.screen.blit(self.surf, self.rect)
+
 
     def _draw_lines(self):
         color = self.settings.BLACK
