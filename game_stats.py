@@ -23,9 +23,14 @@ class Game_stats():
             self.active_stage = 1
         elif self.active_stage == 1:
             self.stage_combat(screen)
-            self.active_stage = 3
+            self.active_stage = 2
         elif self.active_stage == 2:
             self.stage_final()
+        # self.stage_prepare()
+        # self.stage_combat(screen)
+        # self.stage_final()
+
+
     def stage_prepare(self):
         # Бросок кубиков (Встроен в player)
 
@@ -39,16 +44,17 @@ class Game_stats():
 
 
     def stage_combat(self, fs_game):
-        self.round_combat(fs_game)
+        for number_round in range(0, 3):
+            self.round_combat(fs_game)
 
     def round_combat(self, fs_game):
         # Выбор боевых карт
         self._choose_combat_cards()
 
-        # Розыгрыш боевой карты
+        # Розыгрыш боевых карт
         for i in range(0, 2):
             turn = True
-            self.quest = Question_Window(fs_game.screen)
+            self.quest = Question_Window(fs_game.screen, 1)
             while turn == True:
                 self.quest.draw_window()
                 pygame.display.update()
@@ -65,6 +71,7 @@ class Game_stats():
 
         """Реализовать окно с получением урона"""
         self._taking_damage(fs_game.screen)
+        fs_game._update_screen()
 
         # Обнуляем временные атаки и защиты
         self.player_attacker.temporary_attack = 0
@@ -83,10 +90,10 @@ class Game_stats():
 
     def stage_final(self):
         if self.player_attacker.all_moral > self.player_defender.all_moral:
-            print("По морали победил защищающийся")
-        else:
             print("По морали победил атакующий")
-        self.active_stage = 3
+        else:
+            print("По морали победил защищающийся")
+
 
     def _taking_damage(self, screen):
         for i in range(0, 2):
@@ -98,16 +105,29 @@ class Game_stats():
                 while damage > 0:
                     turn = True
                     self.units_window = Unit_Window(screen, self.players[i])
+                    unit_number = None
                     while turn == True:
                         self.units_window.draw_window()
                         pygame.display.update()
                         check = Check_Events(self).check_events("unit")
                         if check != None:
-                            unit_number = check
-                            if self.players[i].army[unit_number].damage_check(damage) == True:
-                                del self.players[i].army[unit_number]
-                            else:
-                                damage -= self.players[i].army[unit_number].health
+                            if check != -1 and check != -2:
+                                unit_number = check
+                                print('unit_number - ', unit_number)
+                                # print('damage - ', damage)
+                                #
+                                # print('damage2 - ', damage)
+
+                            elif check == -1 and unit_number != None:
+                                damage = self.players[i].take_damage(damage, unit_number)
+                                print("Нажата кнопка подтвердить")
+                                turn = False
+                            elif check == -2:
+                                print("Нажата кнопка сброс")
+                                unit_number = None
+
+
+                print("Done")
 
 
     def _choose_combat_cards(self):

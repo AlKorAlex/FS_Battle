@@ -35,8 +35,9 @@ class FS:
         turn = True
         while True:
             self.game_stats.full_combat(self)  # Запуск полного цикла боя
-            Check_Events(self).check_events(None)
+            # Check_Events(self).check_events(None)
             self._update_screen()
+            turn = False
 
     def _update_screen(self):
         self.interface.page('combat_interface')  # отрисовка страницы битвы

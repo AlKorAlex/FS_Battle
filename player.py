@@ -77,11 +77,13 @@ class Player():
         if self.army[unit_number].damage_check(damage) == True:
             damage -= self.army[unit_number].health
             del self.army[unit_number] # Удалить убитого юнита
-            return False
+            print("one")
+            return damage
         else:
             damage = 0
             self.army[unit_number].demoralization()
-            return True
+            print("two")
+            return damage
 
 
 

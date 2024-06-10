@@ -16,6 +16,7 @@ class Main_Window:
         self.FPS = 30  # Частота обновления экрана
         self.clock = pygame.time.Clock()
         self.screen.fill(self.settings.bg_color)
+
     def main_f(self):
         pygame.display.update()
         self.clock.tick(self.FPS)
