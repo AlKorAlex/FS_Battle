@@ -1,8 +1,8 @@
 import pygame
 from button import Button_any
 from battle_card import Battle_card
-from property import *
 from settings import Settings
+from math import *
 
 class Interface():
     """Отвечает за отрисовку всех страниц"""
@@ -26,7 +26,7 @@ class Interface():
     def combat_interface(self, player_turn):
         self._draw_lines() # Линии
         # c_card - созданная карта, нужна для определения размера
-        self.c_card = Battle_card('Благословлённая броня', 0, 0, 0, 1, 0, 'images/Battle/Ultramarins_combat_cards/0 Уровень/0_Держать_Строй.png', 'images/Battle/Ultramarins_combat_cards/Обратная сторона.png', 'Получите 2 временные защиты', 'Бастион/Космодесантник/Ударный крейсер: Переверните до 2х своих кубиков на защиту', ['Бастион', 'Космодесантник', 'Ударный крейсер'], Property_Base_Blessed_Armor)
+        self.c_card = Battle_card('Благословлённая броня', 0, 0, 0, 1, 0, 'images/Battle/Ultramarins_combat_cards/0 Уровень/0_Держать_Строй.png', 'images/Battle/Ultramarins_combat_cards/Обратная сторона.png', 'Получите 2 временные защиты', 'Бастион/Космодесантник/Ударный крейсер: Переверните до 2х своих кубиков на защиту', ['Бастион', 'Космодесантник', 'Ударный крейсер'], None)
 
         # Отступы для карт
         w_s = (1.1 * self.settings.screen_width - 9.6 * self.c_card.surf.get_width()) // 12.8
@@ -148,8 +148,8 @@ class Main_Menu():
         Button_any(self.screen, 'Выход', 200, 100, 0, 300, (0, 255, 0)).draw_button()
 
 class Question_Window():
-    def __init__(self, screen, number):
-        self.screen = screen
+    def __init__(self, game_stats, player_number, number):
+        self.screen = game_stats.screen
 
         self.text = None
         self.surf = pygame.Surface((500, 500))
@@ -157,9 +157,13 @@ class Question_Window():
         self.rect = self.surf.get_rect(center=(Settings().screen_width//2, Settings().screen_height//2))
 
         f = pygame.font.SysFont(None, 24)
-        if number == 1:
+
+        self.player_text = f.render(game_stats.players[player_number].name, 1, Settings().RED, Settings().BLACK)
+        self.pos_pl_text = self.player_text.get_rect(topleft=(0, 0))
+
+        if number == 0:
             self.sc_text = f.render('Вы хотите использовать первое свойство?', 1, Settings().RED, Settings().BLACK)
-        elif number == 2:
+        elif number == 1:
             self.sc_text = f.render('Вы хотите использовать второе свойство?', 1, Settings().RED, Settings().BLACK)
 
         self.pos = self.sc_text.get_rect(center=(500//2, 500//2))
@@ -174,7 +178,10 @@ class Question_Window():
         self.buttons_rect.append(self.rect_yes)
         self.buttons_rect.append(self.rect_no)
     def draw_window(self):
-        self.surf.blit(self.sc_text, self.pos) # Текст
+        self.surf.blit(self.player_text, self.pos_pl_text)
+        self.surf.blit(self.sc_text, self.pos)  # Имя игрока
+
+        self.surf.blit(self.sc_text, self.pos) # Текст вопроса
         self.button_yes.draw_button() # Кнопка Да
         self.button_no.draw_button() # Кнопка Нет
         self.screen.blit(self.surf, self.rect) # Отрисовать окно
@@ -183,7 +190,7 @@ class Question_Window():
 class Unit_Window(): # Окно с выбором юнита
     def __init__(self, screen, game_stats, player_number):
         self.screen = screen
-        self.dice = player.army
+        self.units = game_stats.army[player_number]
 
 
 
@@ -195,7 +202,7 @@ class Unit_Window(): # Окно с выбором юнита
 
         f = pygame.font.SysFont(None, 48)
 
-        self.player_text = f.render(player.name, 1, Settings().RED, Settings().BLACK)
+        self.player_text = f.render(game_stats.players[player_number].name, 1, Settings().RED, Settings().BLACK)
         self.pos_pl_text = self.player_text.get_rect(topleft=(0, 0))
 
         self.sc_text = f.render('Выберите юнита', 1, Settings().RED, Settings().BLACK) # Надпись действия
@@ -212,8 +219,6 @@ class Unit_Window(): # Окно с выбором юнита
         self.buttons_rect.append(self.rect_yes)
         self.buttons_rect.append(self.rect_no)
 
-        for i in range(0, len(self.units)):
-            pass
 
         # Отрисовка юнитов
     def draw_window(self):
@@ -237,8 +242,8 @@ class Unit_Window(): # Окно с выбором юнита
 
 class Dice_Window(): # Окно с выбором кубика
     def __init__(self, screen, game_stats, player_number):
-        self.screen = screen # Окно на котором будет отображаться это окног
-        self.dice = game_stats.all_dice[player_number]
+        self.screen = screen # Окно, на котором будет отображаться это окно
+        self.dice = game_stats.all_dice[player_number] # Кубики игрока
 
         self.text = None
         self.surf = pygame.Surface((500, 500))
@@ -267,19 +272,56 @@ class Dice_Window(): # Окно с выбором кубика
 
         # Отрисовка кубиков
     def draw_window(self):
-        self.dice_rect = []
         for i in range(0, len(self.dice)):
             dice = self.dice[i]
-            played_unit_position_x = 90 * i + 20 * i
-            played_unit_position_y = 60
-            dice.d(self.surf, played_unit_position_x, played_unit_position_y)
+            played_unit_position_x = 110 * (i % 4)
+            played_unit_position_y = 30 + 90 * (i // 4)
+            dice.draw(self.surf, played_unit_position_x, played_unit_position_y, self.rect[0], self.rect[1])
 
-            unit_rect = pygame.Rect(self.rect.x + played_unit_position_x, self.rect.y + played_unit_position_y, 90,
-                                    90)
-            self.units_rect.append(unit_rect)
 
         self.surf.blit(self.player_text, self.pos_pl_text)
         self.surf.blit(self.sc_text, self.pos)  # Текст
         self.button_yes.draw_button()  # Кнопка Подтвердить
         self.button_no.draw_button()  # Кнопка Сброс
+        self.screen.blit(self.surf, self.rect)  # Отрисовать окно
+
+class Faith_Emperor_Window():
+    def __init__(self, game_stats, player_number, number):
+        self.screen = game_stats.screen
+
+        self.text = None
+        self.surf = pygame.Surface((500, 500))
+        self.surf.fill(Settings().RED)
+        self.rect = self.surf.get_rect(center=(Settings().screen_width // 2, Settings().screen_height // 2))
+
+        f = pygame.font.SysFont(None, 24)
+
+        self.player_text = f.render(game_stats.players[player_number].name, 1, Settings().RED, Settings().BLACK)
+        self.pos_pl_text = self.player_text.get_rect(topleft=(0, 0))
+
+        if number == 0:
+            self.sc_text = f.render('Вы хотите использовать первое свойство?', 1, Settings().RED, Settings().BLACK)
+        elif number == 1:
+            self.sc_text = f.render('Вы хотите использовать второе свойство?', 1, Settings().RED, Settings().BLACK)
+
+        self.pos = self.sc_text.get_rect(center=(500 // 2, 500 // 2))
+
+        self.button_yes = Button_any(self.surf, 'Да', 200, 100, 50, 300, (0, 255, 0))
+        self.button_no = Button_any(self.surf, 'Нет', 200, 100, 300, 300, (0, 255, 0))
+
+        self.buttons_rect = []
+        self.rect_yes = pygame.Rect(self.rect.x + self.button_yes.rect.x, self.rect.y + self.button_yes.rect.y,
+                                    self.button_yes.rect.width, self.button_yes.rect.height)
+        self.rect_no = pygame.Rect(self.rect.x + self.button_no.rect.x, self.rect.y + self.button_no.rect.y,
+                                   self.button_no.rect.width, self.button_no.rect.height)
+        self.buttons_rect.append(self.rect_yes)
+        self.buttons_rect.append(self.rect_no)
+
+    def draw_window(self):
+        self.surf.blit(self.player_text, self.pos_pl_text)
+        self.surf.blit(self.sc_text, self.pos)  # Имя игрока
+
+        self.surf.blit(self.sc_text, self.pos)  # Текст вопроса
+        self.button_yes.draw_button()  # Кнопка Да
+        self.button_no.draw_button()  # Кнопка Нет
         self.screen.blit(self.surf, self.rect)  # Отрисовать окно

@@ -12,11 +12,6 @@ class FS:
     def __init__(self):
         """Инициализирует игру и создаёт игровые ресурсы"""
 
-        # Создание экземпляра для хранения игровой статистики
-        self.player_one = Player('Космодесантник', 8)
-        self.player_two = Player('Орк', 8)
-        self.game_stats = Game_stats(self.player_one, self.player_two)
-
         # Визуальная часть игры
         pygame.init()  # Инициализирует настройки, необходимые Pygame для нормальной работы
         self.settings = Settings()
@@ -28,6 +23,12 @@ class FS:
         self.FPS = 60  # Частота обновления экрана
         self.clock = pygame.time.Clock()
         self.screen.fill(self.settings.bg_color)
+
+
+        # Создание экземпляра для хранения игровой статистики
+        self.player_one = Player('Космодесантник', 8)
+        self.player_two = Player('Орк', 8)
+        self.game_stats = Game_stats(self.player_one, self.player_two, self.screen)
         self.interface = Interface(self)
 
     def run_game(self):

@@ -5,22 +5,26 @@ from SpaceMarines import *
 from check_events import Check_Events
 from interface import Question_Window
 from interface import Unit_Window
+from interface import *
 from dice import Dice
 import pygame
 class Game_stats():
     """Отслеживает статистику для игры FS"""
 
-    def __init__(self, player_attacker, player_defender):
+    def __init__(self, player_attacker, player_defender, screen):
         """Инициализирует статистику"""
         self.player_attacker = player_attacker
         self.player_defender = player_defender
         self.players = [self.player_attacker, self.player_defender]
         self.players_cards = []
         self.active_stage = 0
+        self.screen = screen
+
+
 
         """Рефакторинг"""
         self.number_dice = [0, 0] # +
-        self.all_dice = [[], []] # +
+        self.all_dice = [[], []] # Кубики игроков
         self.deck_cards = [[], []] # -
         self.hand_cards = [[], []] # +
         self.all_attack = [0, 0] # +
@@ -77,25 +81,55 @@ class Game_stats():
         # Выбор боевых карт
         self._choose_combat_cards(fs_game)
         # Розыгрыш боевых карт
-        for i in range(0, 2): # Номер игрока
-            fs_game._update_screen()
-            turn = True #
-            self.quest = Question_Window(fs_game.screen, 1)
-            while turn == True:
-                self.quest.draw_window()
-                pygame.display.update()
-                match Check_Events(self).check_events("question"):
-                    case True:
-                        # print("yes")
-                        turn = False
-                    case False:
-                        # print("No")
-                        turn = False
-            self.play_battle_card(i, self.players_cards[i])
-            fs_game._update_screen()
+        for player in range(0, 2): # Номер игрока
+            self.using_battle_cards[player].append(self.players_cards[player])
+            for prop in range(0, 2): # Номер свойства карты
+
+                # self.play_battle_card(player, self.players_cards[player])
+                if prop == 0:
+                    fs_game._update_screen()
+                    turn = True
+                    self.quest = Question_Window(self, player, prop)
+                    while turn == True:
+                        self.quest.draw_window()
+                        pygame.display.update()
+                        match Check_Events(self).check_events("question"):
+                            case True:
+                                # print("yes")
+                                self.players_cards[player].first_property_condition(self, player)
+                                turn = False
+                            case False:
+                                # print("No")
+                                turn = False
+                else:
+                    for j in range(0, len(self.players_cards[player].condition)):
+                        for i in range(0, len(self.army[player])):
+                            if self.army[player][i].name == self.players_cards[player].condition[j] \
+                                    and self.army[player][i].demoralized == False:
+                                fs_game._update_screen()
+                                turn = True
+                                self.quest = Question_Window(self, player, prop)
+                                while turn == True:
+                                    self.quest.draw_window()
+                                    pygame.display.update()
+                                    match Check_Events(self).check_events("question"):
+                                        case True:
+                                            # print("yes")
+                                            self.players_cards[player].second_property_condition(self, player)
+                                            turn = False
+                                        case False:
+                                            # print("No")
+                                            turn = False
+            self.hand_cards[player].remove(self.players_cards[player])
+            self._recalculation()
+
+
+        fs_game._update_screen()
         self.players_cards = []
 
         """Распределение урона"""
+        print(self.all_attack)
+        print(self.all_defence)
         self._taking_damage(fs_game)
         fs_game._update_screen()
 
@@ -122,17 +156,18 @@ class Game_stats():
 
 
     def _taking_damage(self, fs_game):
+        print(1)
         for i in range(0, 2):
             fs_game._update_screen(i)
             self.screen = fs_game.screen
-            damage = self.players[i].all_attack - self.players[i-1**i].all_defence
+            damage = self.all_attack[i] - self.all_defence[i-1**i]
             if damage <= 0:
                 damage = 0
             else:
                 # Выбор юнита
                 while damage > 0:
                     turn = True
-                    self.units_window = Unit_Window(self.screen, self.players[i])
+                    self.units_window = Unit_Window(self.screen, self, i)
                     unit_number = None
                     while turn == True:
                         self.units_window.draw_window()
@@ -147,7 +182,14 @@ class Game_stats():
                                 # print('damage2 - ', damage)
 
                             elif check == -1 and unit_number != None:
-                                damage = self.players[i].take_damage(damage, unit_number)
+                                if self.army[i][unit_number].damage_check(damage) == True:
+                                    damage -= self.army[i][unit_number].health
+                                    del self.army[unit_number]  # Удалить убитого юнита
+                                    print("one")
+                                else:
+                                    damage = 0
+                                    self.army[i][unit_number].demoralization()
+                                    print("two")
                                 print("Нажата кнопка подтвердить")
                                 turn = False
                             elif check == -2:
@@ -159,6 +201,7 @@ class Game_stats():
 
 
     def _choose_combat_cards(self, fs_game):
+        '''Выбор карты для розыгрыша'''
         for i in range(0, 2):
             fs_game._update_screen(i)
             turn = True
@@ -177,6 +220,38 @@ class Game_stats():
                     else:
                         print("Неправильная карта")
 
+    def _choose_dice(self, player_number, number_of_dice):
+        '''Окно с выбором кубика'''
+        self.dice_window = Dice_Window(self.screen, self, player_number)
+        self.dice_window.draw_window()
+        pygame.display.update()
+        choose_dice = []
+        turn = True
+        while turn == True:
+            check = Check_Events(self).check_events("dice")
+            if check != None:
+                if check != -1 and check != -2 and len(choose_dice) < number_of_dice:
+                    # self.all_dice[player_number][check].green_line = True
+                    choose_dice.append(self.all_dice[player_number][check])
+                    for i in range(0, len(choose_dice)):
+                        choose_dice[i].green_line = True
+
+                elif check == -1:
+                    print("Нажата кнопка подтвердить")
+                    turn = False
+                elif check == -2:
+                    print("Нажата кнопка сброс")
+                    # for i in range(0, len(self.all_dice[player_number])):
+                    #     self.all_dice[player_number][i].green_line = False
+                    for i in range(0, len(choose_dice)):
+                        choose_dice[i].green_line = False
+                    choose_dice = []
+                self.dice_window.draw_window()
+                pygame.display.update()
+
+        for i in range(0, len(self.all_dice[player_number])):
+            self.all_dice[player_number][i].green_line = False
+        return choose_dice
 
     def _form_random_unit_list(self):
         for j in range(0, 2):

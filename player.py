@@ -42,13 +42,6 @@ class Player():
         # Удалить боевую карту из колоды
         pass
 
-    def choose_battle_card(self):
-        # Выбрать боевую карту (Переделать)
-        for i in range(0, len(self.battle_cards)):
-            print(i + 1, ' ', self.battle_cards[i].name)
-        bk = int(input('Выберите карту(номер): ')) - 1
-        return bk
-
     def play_battle_card(self, number_battle_card):
         # Розыгрыш боевой карты
         card = self.battle_cards[number_battle_card] # Сама боевая карта
@@ -74,20 +67,6 @@ class Player():
             card_number = random.randint(0, len(all_card))-1
             self.battle_cards.append(all_card[card_number])
             del all_card[card_number]
-
-    def take_damage(self, damage, unit_number):
-        # Получение урона армией игрока
-        if self.army[unit_number].damage_check(damage) == True:
-            damage -= self.army[unit_number].health
-            del self.army[unit_number] # Удалить убитого юнита
-            print("one")
-            return damage
-        else:
-            damage = 0
-            self.army[unit_number].demoralization()
-            print("two")
-            return damage
-
 
 
     def _add_dice(self, type_dice = None):

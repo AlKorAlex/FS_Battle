@@ -15,6 +15,8 @@ class Unit():
         self.surf_normal = pygame.image.load(self.image)  # создание поверхности из картинки юнита
         self.surf = pygame.transform.scale(self.surf_normal, (90, 90))
 
+        self.green_line = False  # Отображение обводки при выборе
+
     def demoralization(self):
         """Деморализует отряд"""
         self.demoralized = True
@@ -38,5 +40,8 @@ class Unit():
         print('Номер - ', number, 'Имя - ', self.name, ', Hp - ', self.health, ', Moral - ', self.moral, 'Состояние - ', condition)
 
     def draw_unit(self, screen, x, y,):
+
         self.rect = self.surf.get_rect(topleft=(x, y))
+        if self.green_line == True:
+            pygame.draw.rect(self.surf, (0, 255, 0), (0, 0, self.surf.get_width(), self.surf.get_height()), 5)
         screen.blit(self.surf, self.rect)

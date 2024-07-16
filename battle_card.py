@@ -31,28 +31,24 @@ class Battle_card():
 
     def second_property_condition(self, game_stats, player_number):
         """Проверка условия второго свойства карты"""
+        self.property.use_second_property(self, game_stats, player_number)
         # Проверка условий
-        for j in range(0, len(self.condition)):
-            for i in range(0, len(game_stats.army[player_number])):
-                if game_stats.army[player_number][i].name == self.condition[j] \
-                        and game_stats.army[player_number][i].demoralized == False:
-                    text = 0
-                    while text != 1 or text != 2:
-                        text = int(input('Вы хотите использовать второе свойство карты? 1 - да, 2 - нет\n'))
-                        if text == 1:
-                            self.property.use_second_property(self, player_number, game_stats)
-                            break
-                        elif text == 2:
-                            break
-                        else:
-                            print('Неправильное значение, повторите попытку')
-        else:
-            print('Вы не можете использовать второе свойство')
-
-
-    def _info(self):
-        print("Информация по карте: ", self.name)
-        pass
+        # for j in range(0, len(self.condition)):
+        #     for i in range(0, len(game_stats.army[player_number])):
+        #         if game_stats.army[player_number][i].name == self.condition[j] \
+        #                 and game_stats.army[player_number][i].demoralized == False:
+        #             text = 0
+        #             while text != 1 or text != 2:
+        #                 text = int(input('Вы хотите использовать второе свойство карты? 1 - да, 2 - нет\n'))
+        #                 if text == 1:
+        #                     self.property.use_second_property(self, player_number, game_stats)
+        #                     break
+        #                 elif text == 2:
+        #                     break
+        #                 else:
+        #                     print('Неправильное значение, повторите попытку')
+        # else:
+        #     print('Вы не можете использовать второе свойство')
 
     def draw_card(self, screen, x, y, turn):
         if turn == 'up':

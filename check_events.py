@@ -36,3 +36,16 @@ class Check_Events():
                             return -1
                         elif button_clicked and i == 1:
                             return -2
+
+                elif move == "dice":
+                    for i in range(0, len(self.game_stats.dice_window.dice)):
+                        button_clicked = self.game_stats.dice_window.dice[i].rect.collidepoint(mouse_pos)
+                        if button_clicked:
+                            return i
+
+                    for i in range(0, 2): # Кнопки подтвердить и сброс
+                        button_clicked = self.game_stats.dice_window.buttons_rect[i].collidepoint(mouse_pos)
+                        if button_clicked and i == 0:
+                            return -1
+                        elif button_clicked and i == 1:
+                            return -2
