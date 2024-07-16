@@ -7,6 +7,7 @@ class Player():
     def __init__(self, name, number_dice, race=None):
 
         self.name = name
+
         self.number_dice = number_dice
         self.all_dice = []
         self.all_card = []
@@ -18,11 +19,13 @@ class Player():
         self.temporary_attack = 0
         self.temporary_defence = 0
         self.army = []
+
+
         self.race = Space_Marines_Cards()
 
-        self._form_random_unit_list()
-        self.first_rolling_dice()
-        self._recalculation()
+        # self._form_random_unit_list()
+        # self.first_rolling_dice()
+        # self._recalculation()
 
     def first_rolling_dice(self):
         """Первый бросок кубиков"""

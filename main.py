@@ -32,15 +32,15 @@ class FS:
 
     def run_game(self):
         """Запуск основного цикла игры"""
-        turn = True
+        turn = True 
         while True:
             self.game_stats.full_combat(self)  # Запуск полного цикла боя
             # Check_Events(self).check_events(None)
             self._update_screen()
             turn = False
 
-    def _update_screen(self):
-        self.interface.page('combat_interface')  # отрисовка страницы битвы
+    def _update_screen(self, turn = 2):
+        self.interface.page('combat_interface', turn)  # отрисовка страницы битвы
         pygame.display.update()
         self.clock.tick(self.FPS)
 

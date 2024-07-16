@@ -11,11 +11,11 @@ class Check_Events():
                 mouse_pos = pygame.mouse.get_pos()
                 if move == "choose_bk":
                     for j in range(0, 2):  # Нажатие на карты в руке у обоих игроков
-                        for i in range(0, len(self.game_stats.players[j].battle_cards)):
-                            button_clicked = self.game_stats.players[j].battle_cards[i].rect.collidepoint(
+                        for i in range(0, len(self.game_stats.hand_cards[j])):
+                            button_clicked = self.game_stats.hand_cards[j][i].rect.collidepoint(
                                 mouse_pos)
                             if button_clicked:
-                                bk = self.game_stats.players[j].battle_cards[i]
+                                bk = self.game_stats.hand_cards[j][i]
                                 print(bk.name)
                                 return bk
                 elif move == "question":
@@ -36,4 +36,3 @@ class Check_Events():
                             return -1
                         elif button_clicked and i == 1:
                             return -2
-

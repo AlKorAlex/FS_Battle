@@ -2,14 +2,15 @@ from unit import Unit
 from property import *
 from battle_card import Battle_card
 
+
 class Space_Marines_Army:
     def __init__(self):
         self.all_units = [['Разведчики', 'Troop', 0, 1, 2, 2, "images/Battle/Ultramarins_Units/0_Разведчики.png"],
-                     ['Ударный крейсер', 'Ship', 0, 2, 2, 2, "images/Battle/Ultramarins_Units/0_Ударный крейсер.png"],
-                     ['Космодесант', 'Troop', 1, 2, 3, 3, "images/Battle/Ultramarins_Units/1_Космодесант.png"],
-                     ['Ленд Рейдер', 'Troop', 2, 3, 4, 4, "images/Battle/Ultramarins_Units/2_Боевая_Баржа.png"],
-                     ['Боевая Баржа', 'Ship', 2, 4, 5, 4, "images/Battle/Ultramarins_Units/2_Ленд_Рейдер.png"],
-                     ['Титан', 'Troop', 3, 3, 5, 4, "images/Battle/Ultramarins_Units/3_Титан.png"]]
+                          ['Ударный крейсер', 'Ship', 0, 2, 2, 2, "images/Battle/Ultramarins_Units/0_Ударный крейсер.png"],
+                          ['Космодесант', 'Troop', 1, 2, 3, 3, "images/Battle/Ultramarins_Units/1_Космодесант.png"],
+                          ['Ленд Рейдер', 'Troop', 2, 3, 4, 4, "images/Battle/Ultramarins_Units/2_Боевая_Баржа.png"],
+                          ['Боевая Баржа', 'Ship', 2, 4, 5, 4, "images/Battle/Ultramarins_Units/2_Ленд_Рейдер.png"],
+                          ['Титан', 'Troop', 3, 3, 5, 4, "images/Battle/Ultramarins_Units/3_Титан.png"]]
 
 
     def create_unit(self, number):
@@ -21,7 +22,7 @@ class Space_Marines_Army:
 
 class Space_Marines_Cards:
     def __init__(self):
-        self.all_cards = []
+        self.image_back = 'images/Battle/Ultramarins_combat_cards/Обратная сторона.png'
         self.lvl_base_cards = [['Благословлённая броня', 0, 0, 0, 1, 0, 'images/Battle/Ultramarins_combat_cards/Базовые карты/Base_Благословлённая_броня.png', 'Получите 2 временные защиты', 'Бастион/Космодесантник/Ударный крейсер: Переверните до 2х своих кубиков на защиту', ['Бастион', 'Космодесантник', 'Ударный крейсер'], Property_Base_Blessed_Armor],
                       ['Вера в Императора', 0, 0, 0, 0, 1, 'images/Battle/Ultramarins_combat_cards/Базовые карты/Base_Вера_в_Императора.png', 'Получите 1 кубик', 'Либо восстановите 1 ваш отряд, либо получите 1 кубик морали', ['Космодесантник'], Property_Base_Faith_Emperor],
                       ['Засада', 0, 0, 1, 0, 0, 'images/Battle/Ultramarins_combat_cards/Базовые карты/Base_Засада.png', 'Получите 2 временные атаки', 'Если в этом раунде боя отряд противника становится деморализованным, то он уничтожается, если владелец не уплатит 1 кубик морали', ['Космодесантник'], Property_Base_Ambush],
@@ -54,7 +55,7 @@ class Space_Marines_Cards:
         o = []
         for i in range(0, 11):
             o.append(deck[number_card][i])
-        return Battle_card(o[0], o[1], o[2], o[3], o[4], o[5], o[6], o[7], o[8], o[9], o[10])
+        return Battle_card(o[0], o[1], o[2], o[3], o[4], o[5], o[6], self.image_back, o[7], o[8], o[9], o[10])
 
     def _choose_card(self):
         deck = None
